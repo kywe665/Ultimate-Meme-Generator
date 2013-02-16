@@ -7,26 +7,36 @@
         function groupDataSelector(item) { return item.group; }
     );
 
+    var UrlObj = {
+        Premade_Popular: "http://version1.api.memegenerator.net/Instances_Select_ByPopular?languageCode=en&pageIndex=0&pageSize=6&urlName=&days=7",
+        Premade_New: "http://version1.api.memegenerator.net/Instances_Select_ByNew?languageCode=en&pageIndex=0&pageSize=6&urlName=",
+        Templates_Popular: "http://version1.api.memegenerator.net/Generators_Select_ByPopular?pageIndex=0&pageSize=6&days=7",
+        Templates_New: "http://version1.api.memegenerator.net/Generators_Select_ByNew?pageIndex=0&pageSize=6",
+        Trending: "http://version1.api.memegenerator.net/Generators_Select_ByTrending"
+    };
 
-    $.ajax({
-        type: 'GET',
-        dataType: "json",
-        url: 'http://version1.api.memegenerator.net/Generators_Select_ByPopular?pageIndex=0&pageSize=12&days=7',
-        success: function (data) {
-            console.log("hello worldy!!!!");
-            if (data.success) {
-                generateMemeData(data.result);
-            }
-        },
-        error: function (req, status, err) {
-            console.log("ERROR: " +err);
-        }
+    $(document).ready(function () {
+        console.log("READY");
+        $(document).on('click', 'button', function (ev) {
+            console.log('BUTTON CLICKED');
+            setTimeout(removeExtraTitles, 500);
+        });
     });
 
-    // TODO: Replace the data with your real data.
-    // You can add data from asynchronous sources whenever it becomes available.
-    generateSampleData().forEach(function (item) {
-        list.push(item);
+    Object.keys(UrlObj).forEach(function (title) {
+        $.ajax({
+            type: 'GET',
+            dataType: "json",
+            url: UrlObj[title],
+            success: function (data) {
+                if (data.success) {
+                    generateMemeData(data.result.slice(0,6), title.replace('_', ' '));
+                }
+            },
+            error: function (req, status, err) {
+                console.log("ERROR: " + err);
+            }
+        });
     });
 
     WinJS.Namespace.define("Data", {
@@ -70,37 +80,47 @@
         }
     }
 
-    function generateMemeData(data) {
+    function generateMemeData(data, title) {
         var itemContent = "ItemContent",
-            itemDescription = "",
             groupDescription = "Most used or visited memes.",
             darkGray = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXY3B0cPoPAANMAcOba1BlAAAAAElFTkSuQmCC",
             lightGray = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXY7h4+cp/AAhpA3h+ANDKAAAAAElFTkSuQmCC",
-            mediumGray = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXY5g8dcZ/AAY/AsAlWFQ+AAAAAElFTkSuQmCC";
-        var groups = [
-            { key: "latest", title: "Popular", subtitle: "Popular", backgroundImage: darkGray, description: groupDescription }
-        ];
+            mediumGray = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXY5g8dcZ/AAY/AsAlWFQ+AAAAAElFTkSuQmCC",
+            imageUrl = "imageUrl",
+            imageTitle = "displayName";
+        if (title.indexOf("Premade") !== -1) {
+            imageUrl = "instanceImageUrl";
+            imageTitle = false;
+        }
+        var group = { 
+            key: title,
+            title: title,
+            subtitle: title,
+            backgroundImage: darkGray,
+            description: groupDescription
+        };
 
-        var items = [
-            { group: groups[0], title: "Item Title: 1", subtitle: "Item Subtitle: 1", description: itemDescription, content: itemContent, backgroundImage: lightGray }
-        ];
-
-        data.forEach(function (meme) {
-            console.log(meme.displayName);
-            items.push({
-                group: groups[0],
-                title: meme.displayName,
+        data.forEach(function (item) {
+            list.push({
+                group: group,
+                title: item[imageTitle] || item.displayName+"...",
                 subtitle: "",
-                description: "Use me!",
+                description: "Use me description!",
                 content: itemContent,
-                backgroundImage: meme.imageUrl
+                backgroundImage: item[imageUrl]
             });
         });
-        items.forEach(function (item) {
-            list.push(item);
-        });
+        setTimeout(removeExtraTitles, 500);
     }
 
+    function removeExtraTitles() {
+        var items = $('.item-title');
+        items.each(function (i) {
+            if ($(items[i]).html().indexOf("...") !== -1) {
+                $(items[i]).closest('.item-overlay').remove();
+            }
+        });
+    }
     // Returns an array of sample data that can be added to the application's
     // data list. 
     function generateSampleData() {
