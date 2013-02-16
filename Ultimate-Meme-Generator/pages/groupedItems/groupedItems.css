@@ -59,7 +59,6 @@
 
     .groupeditemspage .groupeditemslist .item {
         -ms-grid-columns: 1fr;
-        -ms-grid-rows: 1fr 90px;
         display: -ms-grid;
         height: 250px;
         width: 250px;
@@ -71,9 +70,10 @@
 
         .groupeditemspage .groupeditemslist .item .item-overlay {
             -ms-grid-row: 2;
-            -ms-grid-rows: 1fr 21px;
             display: -ms-grid;
-            padding: 6px 15px 2px 15px;
+            padding: 6px 15px 10px 15px;
+            position: absolute;
+            top: 0px;
         }
 
             .groupeditemspage .groupeditemslist .item .item-overlay .item-title {
@@ -136,7 +136,6 @@
         .groupeditemspage .groupeditemslist .item .item-image {
             -ms-grid-column: 1;
             -ms-grid-row-span: 1;
-            height: 60px;
             width: 60px;
         }
 
