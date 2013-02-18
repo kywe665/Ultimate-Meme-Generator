@@ -1,0 +1,39 @@
+﻿body {
+}
+.content {
+    left:50px;
+    position:relative;
+}
+
+.css-customize-page {
+    
+}
+    .css-customize-page .container{
+        float: left;
+        margin-right: 30px;
+        margin-bottom: 30px;
+    }
+    .css-customize-page .banner {
+        margin: 20px;
+    }
+    .css-customize-page .banner .win-backbutton{        
+        float:left;
+        margin-bottom:20px;
+        margin-left:20px;
+        margin-right:20px;
+        margin-top:20px;
+        position:relative;
+    }
+
+.customize-container {
+    width: 50%;
+    background: red;
+    height:520px;
+    position: relative;
+    float: left;
+    padding: 20px;
+}
+
+.item-title {
+    margin-bottom: 10px;
+}

@@ -9,15 +9,15 @@
     <script src="//Microsoft.WinJS.1.0/js/base.js"></script>
     <script src="//Microsoft.WinJS.1.0/js/ui.js"></script>
 
-    <link href="/css/default.css" rel="stylesheet" />
-    <link href="/pages/itemDetail/itemDetail.css" rel="stylesheet" />
+    <!--<link href="/css/default.css" rel="stylesheet" />-->
+    <link href="/css/ItemPage.css" rel="stylesheet" />
     <script src="/js/data.js"></script>
     <script src="/pages/itemDetail/itemDetail.js"></script>
 </head>
 <body>
     <!-- The content that will be loaded and displayed. -->
-    <div class="itemdetailpage fragment">
-        <header aria-label="Header content" role="banner">
+    <div class="css-customize-page">
+        <header aria-label="Header content" role="banner" class="banner">
             <button class="win-backbutton" aria-label="Back" disabled type="button"></button>
             <h1 class="titlearea win-type-ellipsis">
                 <span class="pagetitle"></span>
@@ -25,17 +25,17 @@
         </header>
         <div class="content" aria-label="Main content" role="main">
             <article>
-                <div>
+                <div class="container">
                     <header>
                         <h2 class="item-title"></h2>
                         <h4 class="item-subtitle"></h4>
                     </header>
                     <img class="item-image" src="#" />
                     <div class="item-content">
-                        <div>HelloWORLDS</div>
                     </div>
                 </div>
             </article>
+            <div class="customize-container">ME BE THE CUSTOM</div>
         </div>
     </div>
 </body>
