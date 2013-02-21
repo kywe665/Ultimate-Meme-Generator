@@ -21,6 +21,17 @@
             console.log('BUTTON CLICKED');
             setTimeout(removeExtraTitles, 500);
         });
+        $(document).on('click', '.meme-submission', function (ev) {
+            var textTop = $(this).closest('.customize-center').find('.top-text').val(),
+                textBottom = $(this).closest('.customize-center').find('.bottom-text').val(),
+                imgId = $(this).closest('.content').find('.imgId').attr('data-imgid'),
+                genId = $(this).closest('.content').find('.genId').attr('data-genid');
+            //createMeme("http://www.hasbrotoyshop.com/Files_Main/67910f9093b_Main400.jpg", 'ifgdfawfaxzvksjds');
+            submitMeme(genId, imgId, textTop, textBottom);
+        });
+        $(document).on('click', '.new-meme-url', function (ev) {
+            $(this).select();
+        });
     });
 
     Object.keys(UrlObj).forEach(function (title) {
@@ -47,6 +58,65 @@
         resolveGroupReference: resolveGroupReference,
         resolveItemReference: resolveItemReference
     });
+
+    function submitMeme(genId, imgId, textTop, textBottom) {
+        var username = "ultimatememes",
+            password = "generator";
+        var url = encodeURI("http://version1.api.memegenerator.net/Instance_Create?username=" +
+            username + "&password=" + password + "&languageCode=en&generatorID="+ genId +
+            "&imageID=" + imgId + "&text0=" + textTop + "&text1=" + textBottom);
+        console.log(url);
+        $.ajax({
+            type: 'GET',
+            dataType: "json",
+            url: url,
+            success: function (data) {
+                if (data.success) {
+                    $('.item-image').attr('src', data.result.instanceImageUrl);
+                    $('.new-meme-url').attr('value', data.result.instanceImageUrl);
+                    $('.new-meme-url').css('display', 'block');
+                    $('.new-meme-url').select();
+                }
+                else {
+                    console.log("Something bad happened");
+                }
+            },
+            error: function (req, status, err) {
+                console.log("ERROR: " + err);
+            }
+        });
+    }
+
+    function createMeme(url, name) {
+        $.ajax({
+            type: 'POST',
+            data: 'imageValue='+encodeURIComponent(url),
+            url: "http://memegenerator.net/Xhr/ImageValueToImageID",
+            success: function (id) {
+                if (parseInt(id)) {
+                    console.log(id);
+                    $.ajax({
+                        type: 'POST',
+                        data: 'imageID=' + id + '&DisplayName=' + name + '&TagLine=&Description=+',
+                        url: "http://memegenerator.net/create/generator",
+                        success: function (data) {
+                            $('.item-image').attr('src', 'http://cdn.memegenerator.net/images/' + id + '.jpg');
+                        },
+                        error: function (req, status, err) {
+                            console.log("ERROR: " + err);
+                        }
+                    });
+                }
+                else {
+                    console.log('BAD IMAGE');
+                    console.log(id);
+                }
+            },
+            error: function (req, status, err) {
+                console.log("ERROR: " + err);
+            }
+        });
+    }
 
     // Get a reference for an item, using the group key and item title as a
     // unique reference to the item that can be easily serialized.
@@ -101,12 +171,19 @@
         };
 
         data.forEach(function (item) {
+            var imgId;
+            if (item.imageUrl) {
+                var urlStrip = item.imageUrl.split('/');
+                imgId = urlStrip[urlStrip.length - 1].split('.')[0];
+                console.log(imgId);
+            }
             list.push({
                 group: group,
                 title: item[imageTitle] || item.displayName+"...",
                 subtitle: "",
                 description: "Use me description!",
-                content: itemContent,
+                content: '<span style="display: none" data-genid="'+item.generatorID+'" class="genId"></span>'+
+                        '<span style="display: none" data-imgid="' + imgId + '" class="imgId"></span>',
                 backgroundImage: item[imageUrl]
             });
         });
@@ -121,8 +198,10 @@
             }
         });
     }
-    // Returns an array of sample data that can be added to the application's
-    // data list. 
+
+
+
+    // ***********************OUTDATED!!!*******************************************
     function generateSampleData() {
         var itemContent = "<p>THIS IS THE ITEM DESCRIPTION</p>";
         var itemDescription = "Item Description: Pellentesque porta mauris quis interdum vehicula urna sapien ultrices velit nec venenatis dui odio in augue cras posuere enim a cursus convallis neque turpis malesuada erat ut adipiscing neque tortor ac erat";

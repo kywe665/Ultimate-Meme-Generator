@@ -26,13 +26,45 @@
     }
 
 .customize-container {
+    min-width: 420px;
+    max-width: 1000px;
     width: 50%;
-    background: red;
     height:520px;
     position: relative;
     float: left;
-    padding: 20px;
+    padding-top: 38px;
 }
+    .customize-container .customize-center {
+        width: 400px;
+        //background: blue;
+        height: 400px;
+        margin: 0 auto;
+    }
+    .customize-container h1 {
+        left: 72px;
+        position: relative;
+        top: 40px;
+    }
+    .customize-container input.text-input{
+        display:block;
+        position: relative;
+        width: 300px;
+        margin: 0 auto;
+        margin-top: 20px;
+        top: 75px;
+    }
+    .customize-container input.meme-submission{
+        display:block;
+        position: relative;
+        margin: 0 auto;
+        bottom: -100px;
+    }
+    .customize-container input.new-meme-url {
+        display:none;
+        position: relative;
+        margin: 0 auto;
+        bottom: -130px;
+    }
 
 .item-title {
     margin-bottom: 10px;
