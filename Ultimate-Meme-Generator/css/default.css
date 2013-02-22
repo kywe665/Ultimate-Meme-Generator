@@ -3,6 +3,18 @@
     width: 100%;
 }
 
+section .css-noload {
+    height:500px;
+    width: 500px;
+    margin: 0 auto;
+    top: 150px;
+    top: calc(50%-250px);
+    left: 150px;
+    left: calc(50%-250px);
+    position: absolute;
+    display: block;
+}
+
 .fragment {
     /* Define a grid with rows for a banner and a body */
     -ms-grid-columns: 1fr;

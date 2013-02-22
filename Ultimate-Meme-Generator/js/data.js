@@ -1,6 +1,16 @@
 ﻿(function () {
     "use strict";
 
+    var NoLoadMessage = ''+
+        '<div class="css-noload">' +
+            '<h2>Connectivity Error</h2>' +
+            '<p>We cannot connect to the Meme Server at his time. Check your connection to <a href="http://memegenerator.net">memegenerator.net</a>. Your loss of connectivity could be due to:</p>' +
+            '<ul>' +
+                '<li>ISP or router configurations</li>' +
+                '<li>Firewall settings</li>' +
+                '<li>Content filtering on public connections</li>' +
+            '</ul>'+
+        '</div>';
     var list = new WinJS.Binding.List();
     var groupedItems = list.createGrouped(
         function groupKeySelector(item) { return item.group.key; },
@@ -14,6 +24,8 @@
         Templates_New: "http://version1.api.memegenerator.net/Generators_Select_ByNew?pageIndex=0&pageSize=6",
         Trending: "http://version1.api.memegenerator.net/Generators_Select_ByTrending"
     };
+    //TODO remove
+    staticGroups();
 
     $(document).ready(function () {
         console.log("READY");
@@ -41,11 +53,16 @@
             url: UrlObj[title],
             success: function (data) {
                 if (data.success) {
+                    staticGroups();
                     generateMemeData(data.result.slice(0,6), title.replace('_', ' '));
                 }
             },
             error: function (req, status, err) {
-                console.log("ERROR: " + err);
+                console.log("Init ERROR: " + err);
+                if ($('.css-noload').length < 1) {
+                    //TODO enable
+                    //$('section').append(NoLoadMessage);
+                }
             }
         });
     });
@@ -82,7 +99,7 @@
                 }
             },
             error: function (req, status, err) {
-                console.log("ERROR: " + err);
+                console.log("Submit ERROR: " + err);
             }
         });
     }
@@ -103,7 +120,7 @@
                             $('.item-image').attr('src', 'http://cdn.memegenerator.net/images/' + id + '.jpg');
                         },
                         error: function (req, status, err) {
-                            console.log("ERROR: " + err);
+                            console.log("Create ERROR: " + err);
                         }
                     });
                 }
@@ -113,7 +130,7 @@
                 }
             },
             error: function (req, status, err) {
-                console.log("ERROR: " + err);
+                console.log("Img ERROR: " + err);
             }
         });
     }
@@ -199,10 +216,7 @@
         });
     }
 
-
-
-    // ***********************OUTDATED!!!*******************************************
-    function generateSampleData() {
+    function staticGroups() {
         var itemContent = "<p>THIS IS THE ITEM DESCRIPTION</p>";
         var itemDescription = "Item Description: Pellentesque porta mauris quis interdum vehicula urna sapien ultrices velit nec venenatis dui odio in augue cras posuere enim a cursus convallis neque turpis malesuada erat ut adipiscing neque tortor ac erat";
         var groupDescription = "Group Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus tempor scelerisque lorem in vehicula. Aliquam tincidunt, lacus ut sagittis tristique, turpis massa volutpat augue, eu rutrum ligula ante a ante";
@@ -216,15 +230,23 @@
         // Each of these sample groups must have a unique key to be displayed
         // separately.
         var sampleGroups = [
-            { key: "group1", title: "Group Title: 1", subtitle: "Group Subtitle: 1", backgroundImage: darkGray, description: groupDescription }
+            { key: "custom", title: "Create Custom", subtitle: "Got your own idea?", backgroundImage: darkGray, description: groupDescription }
         ];
 
         // Each of these sample items should have a reference to a particular
         // group.
         var sampleItems = [
-            { group: sampleGroups[0], title: "Item Title: 2", subtitle: "Item Subtitle: 2", description: itemDescription, content: itemContent, backgroundImage: darkGray }
+            { group: sampleGroups[0], title: "New", subtitle: "Use your own image", description: itemDescription, content: itemContent, backgroundImage: 'custom' }
         ];
-
-        return sampleItems;
+        //TODO
+        sampleItems.forEach(function (item) {
+            list.push(item);
+        });
+        setTimeout(reRouteCustom, 500);
+    }
+    function reRouteCustom() {
+        $('.item-image[src="custom"]').addClass('make-custom');
+        $('.group-title:contains(Create Custom)').closest('button').addClass("make-custom");
+        $('.group-title:contains(Create Custom)').closest('button').attr('onclick', '');
     }
 })();
