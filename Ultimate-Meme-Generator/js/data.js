@@ -13,9 +13,9 @@
         '</div>';
     var customForm = ''+
         '<div class="create-new">' +
-            '<div class= "text-input">Meme Name</div>' +
+            '<div class= "text-input">Unique Meme Name</div>' +
             '<input type="text" class="unique-name text-input" placeholder="Unique Meme Name"/>' +
-            '<div class= "text-input">Url</div>' +
+            '<div class= "text-input">Url (must be a .jpg or .png)</div>' +
             '<input type="text" class="custom-url text-input" placeholder="Image URL .JPG or .PNG"/>' +
             //'<div class= "text-input">OR: File</div>' +
             //'<input type="file" class="custom-file text-input" placeholder="File"/>' +
@@ -25,6 +25,11 @@
             '<input type="text" readonly=true class="new-meme-url create-third" value="havent made one" />' +
         '</div>'+
         '<img class="your-new-meme create-third" src=""/>';
+    var searchBar = '' +
+        '<div class="searchbar-container">'+
+            '<input type="text" placeholder="Search" class="search-text" />' +
+            '<input type="button" class="search-button" value="Search >" />'
+        '</div>';
 
     var list = new WinJS.Binding.List();
     var groupedItems = list.createGrouped(
@@ -33,16 +38,27 @@
     );
 
     var UrlObj = {
-        Premade_Popular: "http://version1.api.memegenerator.net/Instances_Select_ByPopular?languageCode=en&pageIndex=0&pageSize=6&urlName=&days=7",
-        //Premade_New: "http://version1.api.memegenerator.net/Instances_Select_ByNew?languageCode=en&pageIndex=0&pageSize=6&urlName=",
-        Templates_Popular: "http://version1.api.memegenerator.net/Generators_Select_ByPopular?pageIndex=0&pageSize=6&days=7",
-        Templates_New: "http://version1.api.memegenerator.net/Generators_Select_ByNew?pageIndex=0&pageSize=6"
+        Premade_Popular: "http://version1.api.memegenerator.net/Instances_Select_ByPopular?languageCode=en&urlName=&days=7&pageSize=6&pageIndex=0",
+        //Premade_New: "http://version1.api.memegenerator.net/Instances_Select_ByNew?languageCode=en&urlName=&pageSize=6&pageIndex=0",
+        Templates_Popular: "http://version1.api.memegenerator.net/Generators_Select_ByPopular?days=7&pageSize=6&pageIndex=0",
+        Templates_New: "http://version1.api.memegenerator.net/Generators_Select_ByNew?&pageSize=6&pageIndex=0"
         //Trending: "http://version1.api.memegenerator.net/Generators_Select_ByTrending"
-    };    
+    };
+
+    var UrlLoaded = {
+        Premade_Popular: false,
+        //Premade_New: false,
+        Templates_Popular: false,
+        Templates_New: false
+        //Trending: false
+    };
 
     //EVENT HANDLERS
     $(document).ready(function () {
+        startLoading();
         staticGroups();
+        setTimeout(makeSearchBar, 500);
+        //makeSearchBar();
         //READ ALL APIs
         Object.keys(UrlObj).forEach(function (title) {
             $.ajax({
@@ -52,6 +68,7 @@
                 success: function (data) {
                     if (data.success) {
                         generateMemeData(data.result.slice(0, 6), title.replace('_', ' '));
+                        stopLoading();
                     }
                 },
                 error: function (req, status, err) {
@@ -59,21 +76,29 @@
                     if ($('.css-noload').length < 1) {
                         $('section div').hide();
                         $('section').append(NoLoadMessage);
+                        stopLoading();
                     }
                 }
             });
         });
         console.log("READY");
         $(document).on('click', 'button', function (ev) {
-            console.log('BUTTON CLICKED');
+            var text = $(this).text().trim().replace(' ', '_');
+            console.log(text);
+            if (UrlObj[text] && !UrlLoaded[text]) {
+                UrlLoaded[text] = true;
+                loadMore(UrlObj[text], text);
+            }
             setTimeout(removeExtraTitles, 500);
             setTimeout(reRouteCustom, 500);
+            setTimeout(makeSearchBar, 500);
         });
         $(document).on('click', '.meme-submission', function (ev) {
             var textTop = $(this).closest('.customize-center').find('.top-text').val(),
                 textBottom = $(this).closest('.customize-center').find('.bottom-text').val(),
                 imgId = $(this).closest('.content').find('.imgId').attr('data-imgid'),
                 genId = $(this).closest('.content').find('.genId').attr('data-genid');
+            startLoading();
             submitMeme(genId, imgId, textTop, textBottom);
         });
         $(document).on('click', '.meme-creation', function (ev) {
@@ -81,10 +106,24 @@
                 textBottom = $('.bottom-text').val(),
                 url = $('.custom-url').val(),
                 uniqueName = $('.unique-name').val();
+            startLoading();
             if (url && uniqueName) {
                 checkUrl(url, uniqueName, textTop, textBottom);
             }
         });
+        /*$(document).on('keypress', '.bottom-text', function (e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) {
+                var textTop = $('.top-text').val(),
+                textBottom = $('.bottom-text').val(),
+                url = $('.custom-url').val(),
+                uniqueName = $('.unique-name').val();
+                startLoading();
+                if (url && uniqueName) {
+                    checkUrl(url, uniqueName, textTop, textBottom);
+                }
+            }
+        });*/
         $(document).on('click', '.new-meme-url', function (ev) {
             $(this).select();
         });
@@ -108,6 +147,19 @@
                 $('.custom-url').css('border', '4px solid red');
             }
         });
+        $(document).on('click', '.search-button', function (ev) {
+            console.log($('.search-text').val().trim());
+            startLoading();
+            makeSearchGroup($('.search-text').val().trim());
+        });
+        $(document).on('keypress', '.search-text', function (e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            $('.search-text').css('border', 'none');
+            if (code == 13) {
+                console.log($('.search-text').val().trim());
+                makeSearchGroup($('.search-text').val().trim());
+            }
+        });
     });
 
     WinJS.Namespace.define("Data", {
@@ -118,6 +170,43 @@
         resolveGroupReference: resolveGroupReference,
         resolveItemReference: resolveItemReference
     });
+
+    function makeSearchGroup(query) {
+        var url = 'http://version1.api.memegenerator.net/Generators_Search?q=' + encodeURI(query) + '&pageIndex=0&pageSize=12';
+        $.ajax({
+            type: 'GET',
+            dataType: "json",
+            url: url,
+            success: function (data) {
+                if (data.success) {
+                    if (data.result.length < 1) {
+                        $('.search-text').css('border', '4px solid red');
+                        stopLoading();
+                    }
+                    else {
+                        generateMemeData(data.result, query);
+                        setTimeout(forceScroll, 500);
+                        $('.search-text').css('border', 'none');
+                    }
+                }
+            },
+            error: function (req, status, err) {
+                console.log("search ERROR: " + err);
+                $('.search-text').css('border', '4px solid red');
+                stopLoading();
+            }
+        });
+    }
+
+    function forceScroll() {
+        console.log($(".win-surface")[0].scrollWidth);
+        $(".win-surface").scrollLeft($(".win-surface")[0].scrollWidth);
+        console.log($(".win-viewport")[0].scrollWidth);
+        $(".win-viewport").scrollLeft($(".win-viewport")[0].scrollWidth);
+        console.log($(".win-container").parent()[0].scrollWidth);
+        $(".win-container").parent().scrollLeft($(".win-container").parent()[0].scrollWidth);
+        stopLoading();
+    }
 
     function submitMeme(genId, imgId, textTop, textBottom) {
         var username = "ultimatememes",
@@ -136,6 +225,10 @@
                     $('.new-meme-url').attr('value', data.result.instanceImageUrl);
                     $('.new-meme-url').css('display', 'block');
                     $('.new-meme-url').select();
+                    var share = 'https://www.facebook.com/sharer.php?u=' + data.result.instanceImageUrl + '&t=' + encodeURI('Ultimate Meme Generator Win8 App');
+                    $('.meme-share').attr('href', share);
+                    $('.meme-share').css('display', 'block');
+                    stopLoading();
                 }
                 else {
                     console.log("Something bad happened");
@@ -143,6 +236,7 @@
             },
             error: function (req, status, err) {
                 console.log("Submit ERROR: " + err);
+                stopLoading();
             }
         });
     }
@@ -162,11 +256,13 @@
                     console.log('BAD URL');
                     console.log(id);
                     $('.custom-url').css('border', '4px solid red');
+                    stopLoading();
                 }
             },
             error: function (req, status, err) {
                 console.log("Url ERROR: " + err);
                 $('.custom-url').css('border', '4px solid red');
+                stopLoading();
             }
         });
     }
@@ -184,6 +280,7 @@
             error: function (req, status, err) {
                 console.log("CreateImg ERROR: " + err);
                 $('.custom-url').css('border', '4px solid red');
+                stopLoading();
             }
         });
     }
@@ -201,26 +298,7 @@
             error: function (req, status, err) {
                 console.log("GetGenID ERROR: " + err);
                 $('.custom-url').css('border', '4px solid red');
-            }
-        });
-    }
-    function testCreateMeme() {
-        console.log("testing");
-        $.ajax({
-            type: 'POST',
-            data: 'generatorID=19675&imageID=8179778&text0=' + 'Trying to burn'.split(' ').join('+') + '&text1=' + 'the last couple inches'.split(' ').join('+') + '&languageCode=en',
-            url: "http://memegenerator.net/MarathonGirl/caption",
-            success: function (data) {
-                console.log(data);
-                var finalImgId = data.match('instance/[1-9]{1,}')[0].split('/')[1];
-                var src = 'http://cdn.memegenerator.net/instances/400x/' + finalImgId + '.jpg';
-                console.log(src);
-            },
-            error: function (req, status, err) {
-                Object.keys(req).forEach(function (key) {
-                    console.log(key);
-                });
-                console.log(req.statusText);
+                stopLoading();
             }
         });
     }
@@ -237,10 +315,12 @@
                 $('.new-meme-url').attr('value', src);
                 $('.your-new-meme').attr('src', src);
                 console.log(src);
+                stopLoading();
             },
             error: function (req, status, err) {
                 console.log("Create ERROR: " + err);
                 $('.custom-url').css('border', '4px solid red');
+                stopLoading();
             }
         });
     }
@@ -293,7 +373,7 @@
             key: title,
             title: title,
             subtitle: title,
-            backgroundImage: darkGray,
+            backgroundImage: './images/mainLogoLarge.png',
             description: groupDescription
         };
 
@@ -307,13 +387,42 @@
                 group: group,
                 title: item[imageTitle] || item.displayName+"...",
                 subtitle: "",
-                description: "Use me description!",
+                description: "",
                 content: '<span style="display: none" data-genid="'+item.generatorID+'" class="genId"></span>'+
                         '<span style="display: none" data-imgid="' + imgId + '" class="imgId"></span>',
                 backgroundImage: item[imageUrl]
             });
         });
         setTimeout(removeExtraTitles, 500);
+    }
+
+    function loadMore(url, title) {
+        var newUrl = url.substring(0, url.length - 1) + 2;
+        console.log(newUrl);
+        $.ajax({
+            type: 'GET',
+            dataType: "json",
+            url: newUrl,
+            success: function (data) {
+                if (data.success) {
+                    generateMemeData(data.result, title.replace('_', ' '));
+                }
+            },
+            error: function (req, status, err) {
+                console.log("loadMore ERROR: " + err);
+                /*if ($('.css-noload').length < 1) {
+                    $('section div').hide();
+                    $('section').append(NoLoadMessage);
+                }*/
+            }
+        });
+    }
+
+    function startLoading() {
+        $('#loader').addClass('show');
+    }
+    function stopLoading() {
+        $('#loader').removeClass('show');
     }
 
     function removeExtraTitles() {
@@ -339,7 +448,7 @@
         // Each of these sample groups must have a unique key to be displayed
         // separately.
         var sampleGroups = [
-            { key: "custom", title: "Create Custom", subtitle: "Got your own idea?", backgroundImage: darkGray, description: groupDescription }
+            { key: "custom", title: "Create Custom", subtitle: "Got your own idea?", backgroundImage: './images/mainLogoLarge.png', description: groupDescription }
         ];
 
         // Each of these sample items should have a reference to a particular
@@ -352,6 +461,10 @@
             list.push(item);
         });
         setTimeout(reRouteCustom, 500);
+    }
+
+    function makeSearchBar() {
+        $('header').append(searchBar);
     }
 
     function showCustomForm() {

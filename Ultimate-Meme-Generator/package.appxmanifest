@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-  <Identity Name="62d8d150-0a3b-49fe-a3a6-0ca256cd0333" Version="1.0.0.0" Publisher="CN=Admin" />
+  <Identity Name="38525kywe665.UltimateMemeGenerator" Version="1.0.0.2" Publisher="CN=4BC9C5F4-83FC-40C8-B555-D00D50E53615" />
   <Properties>
-    <DisplayName>Ultimate-Meme-Generator</DisplayName>
-    <PublisherDisplayName>Admin</PublisherDisplayName>
+    <DisplayName>Ultimate Meme Generator</DisplayName>
+    <PublisherDisplayName>kywe665</PublisherDisplayName>
     <Logo>images\storelogo.png</Logo>
   </Properties>
   <Prerequisites>
@@ -15,13 +15,14 @@
   </Resources>
   <Applications>
     <Application Id="App" StartPage="default.html">
-      <VisualElements DisplayName="Ultimate-Meme-Generator" Logo="images\mainLogo.png" SmallLogo="images\mainLogoSmall.png" Description="Ultimate-Meme-Generator" ForegroundText="light" BackgroundColor="#464646">
+      <VisualElements DisplayName="Ultimate Meme Generator" Logo="images\mainLogo.png" SmallLogo="images\mainLogoSmall.png" Description="Ultimate-Meme-Generator" ForegroundText="light" BackgroundColor="#464646">
         <DefaultTile ShowName="allLogos" WideLogo="images\mainLogoLarge.png" ShortName="MemeGen" />
         <SplashScreen Image="images\splash.png" />
       </VisualElements>
     </Application>
   </Applications>
   <Capabilities>
+    <Capability Name="picturesLibrary" />
     <Capability Name="internetClient" />
   </Capabilities>
 </Package>
