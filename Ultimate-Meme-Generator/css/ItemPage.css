@@ -4,19 +4,15 @@
     left:50px;
     position:relative;
 }
-
-.css-customize-page {
-    
-}
-    .css-customize-page .container{
+    .container{
         float: left;
         margin-right: 30px;
         margin-bottom: 30px;
     }
-    .css-customize-page .banner {
+    .banner {
         margin: 20px;
     }
-    .css-customize-page .banner .win-backbutton{        
+    .banner .win-backbutton{        
         float:left;
         margin-bottom:20px;
         margin-left:20px;
@@ -34,7 +30,7 @@
     float: left;
     padding-top: 38px;
 }
-    .customize-container .customize-center {
+    .customize-container .customize-center{
         width: 400px;
         //background: blue;
         height: 400px;
@@ -45,7 +41,7 @@
         position: relative;
         top: 40px;
     }
-    .customize-container input.text-input{
+    .customize-container input.text-input, .create-new .text-input{
         display:block;
         position: relative;
         width: 300px;
@@ -64,6 +60,34 @@
         position: relative;
         margin: 0 auto;
         bottom: -130px;
+    }
+
+.create-new {
+    width: 400px;
+    height: 460px;
+    margin-right: 70px;
+    float: left;
+}
+.create-new input.create-second {
+    display: none;
+}
+.create-third {
+    display: none;
+}
+.create-new .meme-creation {
+    bottom: -105px;
+    display: block;
+    position: relative;
+    margin: 0 auto;
+}
+.create-new .new-meme-url {
+    bottom: -135px;
+    position: relative;
+    margin: 0 auto;
+}
+    .create-new .your-new-meme {
+        position: relative;
+        float: left;
     }
 
 .item-title {

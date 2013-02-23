@@ -56,7 +56,14 @@
     <Content Include="css\default.css" />
     <Content Include="css\ItemPage.css" />
     <Content Include="images\logo.png" />
+    <Content Include="images\mainLogo.jpg" />
+    <Content Include="images\mainLogo.png" />
+    <Content Include="images\mainLogoLarge.png" />
+    <Content Include="images\mainLogoSmall.png" />
+    <Content Include="images\plus.png" />
     <Content Include="images\smalllogo.png" />
+    <Content Include="images\splash.jpg" />
+    <Content Include="images\splash.png" />
     <Content Include="images\splashscreen.png" />
     <Content Include="images\startup.jpg" />
     <Content Include="images\storelogo.png" />
