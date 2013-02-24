@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-  <Identity Name="38525kywe665.UltimateMemeGenerator" Version="1.0.0.2" Publisher="CN=4BC9C5F4-83FC-40C8-B555-D00D50E53615" />
+  <Identity Name="38525kywe665.UltimateMemeGenerator" Version="1.0.0.3" Publisher="CN=4BC9C5F4-83FC-40C8-B555-D00D50E53615" />
   <Properties>
     <DisplayName>Ultimate Meme Generator</DisplayName>
     <PublisherDisplayName>kywe665</PublisherDisplayName>

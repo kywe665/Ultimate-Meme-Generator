@@ -39,7 +39,7 @@
 
     var UrlObj = {
         Premade_Popular: "http://version1.api.memegenerator.net/Instances_Select_ByPopular?languageCode=en&urlName=&days=7&pageSize=6&pageIndex=0",
-        //Premade_New: "http://version1.api.memegenerator.net/Instances_Select_ByNew?languageCode=en&urlName=&pageSize=6&pageIndex=0",
+        Premade_New: "http://version1.api.memegenerator.net/Instances_Select_ByNew?languageCode=en&urlName=&pageSize=6&pageIndex=0",
         Templates_Popular: "http://version1.api.memegenerator.net/Generators_Select_ByPopular?days=7&pageSize=6&pageIndex=0",
         Templates_New: "http://version1.api.memegenerator.net/Generators_Select_ByNew?&pageSize=6&pageIndex=0"
         //Trending: "http://version1.api.memegenerator.net/Generators_Select_ByTrending"
@@ -47,7 +47,7 @@
 
     var UrlLoaded = {
         Premade_Popular: false,
-        //Premade_New: false,
+        Premade_New: false,
         Templates_Popular: false,
         Templates_New: false
         //Trending: false
